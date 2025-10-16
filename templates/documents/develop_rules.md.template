@@ -1,0 +1,796 @@
+# Development Standards and Rules
+
+**Project**: {Project Name}
+**Tech Stack**: {Tech Stack}
+**Created**: {Date}
+**Last Updated**: {Date}
+
+---
+
+## Document Purpose
+
+This document defines the development standards, best practices, and critical rules that all team members must follow. These rules ensure code quality, system stability, and efficient collaboration.
+
+**Audience**: @arch, @back, @front, @test, @devops
+
+**Document Owner**: @arch
+
+---
+
+## Table of Contents
+
+1. [Critical Rules (MUST FOLLOW)](#critical-rules-must-follow)
+2. [Code Quality Standards](#code-quality-standards)
+3. [Testing Standards](#testing-standards)
+4. [Documentation Standards](#documentation-standards)
+5. [Git Workflow](#git-workflow)
+6. [Code Review Process](#code-review-process)
+7. [Security Standards](#security-standards)
+8. [Performance Standards](#performance-standards)
+9. [Technology-Specific Standards](#technology-specific-standards)
+
+---
+
+## Critical Rules (MUST FOLLOW)
+
+**These rules are MANDATORY and cannot be violated under any circumstances**
+
+### Rule 1: Documentation First
+
+**Purpose**: Prevent unauthorized changes and ensure all work is planned and approved.
+
+**Requirements**:
+- **MUST** document the plan in design documents BEFORE development or execution
+- **MUST** obtain explicit approval from @pm or @user before proceeding
+- **MUST** use ONLY resources explicitly defined in design documentation
+- **MUST** update documentation FIRST before implementing any changes
+- **MUST** follow the documented plan exactly
+
+**Applies To**: All roles
+
+**Workflow**:
+1. Create/update documentation with requirements and plan
+2. Get approval from @pm or @user
+3. Execute according to documentation
+4. Update documentation if actual implementation differs
+
+**Examples**:
+
+✅ **CORRECT**:
+```
+1. Create ADR-001 documenting API design
+2. Get @pm approval
+3. Implement API according to ADR-001
+4. Update ADR-001 if implementation differs
+```
+
+❌ **FORBIDDEN**:
+```
+1. Start implementing API
+2. Document after the fact
+3. Make changes without updating documentation
+```
+
+**Consequences of Violation**:
+- Code changes will be rejected in review
+- May require rework and re-approval
+- Delays project timeline
+
+---
+
+### Rule 2: No Unauthorized Resource Usage
+
+**Purpose**: Prevent conflicts, security issues, and unexpected costs.
+
+**Requirements**:
+- **MUST** document all resource usage in design documents
+- **MUST** get approval before using any resource
+- **MUST** check resource availability before use
+- **MUST** report conflicts immediately
+
+**Applies To**: @back, @front, @devops
+
+**Resources Requiring Approval**:
+- Network ports
+- External APIs or services
+- Database schemas and tables
+- Cloud resources
+- Third-party libraries or frameworks
+- Software installations on host system
+- Containerization resources (volumes, networks)
+
+**Workflow**:
+1. Document resource requirements
+2. Check availability (ports, names, etc.)
+3. Request approval from @arch and @pm
+4. Wait for confirmation
+5. Use resource as documented
+
+**Examples**:
+
+✅ **CORRECT**:
+```
+1. Document in arch.md: "User service will use port 8081"
+2. Check: lsof -i :8081 (port is free)
+3. Request approval from @arch
+4. After approval, configure service on port 8081
+```
+
+❌ **FORBIDDEN**:
+```
+1. Configure service on port 8081 without documentation
+2. Discover port conflict later
+3. Change port without updating documentation
+```
+
+**Consequences of Violation**:
+- Service conflicts and failures
+- Security vulnerabilities
+- Unexpected costs
+- Deployment failures
+
+---
+
+### Rule 3: Test Before Commit
+
+**Purpose**: Ensure code quality and prevent broken builds.
+
+**Requirements**:
+- **MUST** write tests for all new features and bug fixes
+- **MUST** run full test suite before committing
+- **MUST** ensure all tests pass before submitting for review
+- **MUST** achieve minimum code coverage targets
+
+**Applies To**: @back, @front
+
+**Minimum Coverage Targets**:
+- Backend: >80% code coverage
+- Frontend: >70% code coverage
+- Critical paths: 100% coverage
+
+**Workflow**:
+1. Write failing test (TDD approach)
+2. Implement feature to make test pass
+3. Run full test suite locally
+4. Verify all tests pass
+5. Check coverage meets targets
+6. Commit and push
+
+**Examples**:
+
+✅ **CORRECT**:
+```bash
+# Write test first
+npm test -- UserService.test.js
+
+# Implement feature
+# ...
+
+# Run all tests
+npm test
+
+# Check coverage
+npm run coverage
+
+# Commit only if all pass
+git commit -m "feat: add user authentication"
+```
+
+❌ **FORBIDDEN**:
+```bash
+# Implement without tests
+git commit -m "feat: add user authentication (tests TODO)"
+
+# Commit with failing tests
+git commit -m "feat: add feature (fix tests later)"
+```
+
+**Consequences of Violation**:
+- Pull request will be rejected
+- CI/CD pipeline will fail
+- Potential bugs in production
+
+---
+
+### Rule 4: Code Review Required
+
+**Purpose**: Maintain code quality and share knowledge.
+
+**Requirements**:
+- **MUST** submit all code for review before merging
+- **MUST** address all review feedback
+- **MUST** get approval from @arch or designated reviewer
+- **MUST NOT** merge own pull requests
+
+**Applies To**: All developers
+
+**Review Checklist**:
+- [ ] Code follows development standards
+- [ ] Tests are included and pass
+- [ ] Documentation is updated
+- [ ] No security vulnerabilities
+- [ ] No performance issues
+- [ ] Follows architecture design
+
+**Workflow**:
+1. Create pull request with clear description
+2. Request review from @arch or team member
+3. Address all review comments
+4. Request re-review if changes made
+5. Merge only after approval
+
+**Examples**:
+
+✅ **CORRECT**:
+```
+1. Create PR: "feat: add user authentication API"
+2. Add description and link to task
+3. Request review from @arch
+4. Address feedback: "Updated error handling per review"
+5. Get approval
+6. Merge
+```
+
+❌ **FORBIDDEN**:
+```
+1. Push directly to main branch
+2. Merge own PR without review
+3. Ignore review feedback
+```
+
+**Consequences of Violation**:
+- PR will be reverted
+- May require disciplinary action for repeated violations
+
+---
+
+### Rule 5: Security First
+
+**Purpose**: Protect user data and prevent security breaches.
+
+**Requirements**:
+- **MUST NOT** commit secrets (passwords, API keys, tokens) to Git
+- **MUST** use environment variables for configuration
+- **MUST** validate and sanitize all user input
+- **MUST** use HTTPS for all external communication
+- **MUST** follow principle of least privilege
+
+**Applies To**: All roles
+
+**Security Checklist**:
+- [ ] No secrets in code or config files
+- [ ] User input is validated and sanitized
+- [ ] SQL injection prevention (parameterized queries)
+- [ ] XSS prevention (output encoding)
+- [ ] CSRF protection enabled
+- [ ] Authentication and authorization implemented
+- [ ] Sensitive data encrypted
+
+**Examples**:
+
+✅ **CORRECT**:
+```javascript
+// Use environment variables
+const apiKey = process.env.API_KEY;
+
+// Parameterized queries
+db.query('SELECT * FROM users WHERE email = ?', [email]);
+
+// Input validation
+const schema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(8).required()
+});
+```
+
+❌ **FORBIDDEN**:
+```javascript
+// Hardcoded secrets
+const apiKey = "sk_live_abc123xyz789";
+
+// SQL injection vulnerability
+db.query(`SELECT * FROM users WHERE email = '${email}'`);
+
+// No input validation
+const user = await createUser(req.body);
+```
+
+**Consequences of Violation**:
+- Code will be rejected immediately
+- Security incident may require emergency fixes
+- Potential data breach
+
+---
+
+## Code Quality Standards
+
+### General Principles
+
+1. **Readability**: Code is read more than written. Optimize for clarity.
+2. **Simplicity**: Simple code is better than clever code.
+3. **DRY (Don't Repeat Yourself)**: Avoid code duplication.
+4. **SOLID Principles**: Follow SOLID design principles.
+5. **YAGNI (You Aren't Gonna Need It)**: Don't add functionality until needed.
+
+### Naming Conventions
+
+**Variables and Functions**:
+- Use descriptive, meaningful names
+- camelCase for variables and functions
+- PascalCase for classes and components
+- UPPER_CASE for constants
+
+**Examples**:
+
+✅ **GOOD**:
+```javascript
+const userEmail = "user@example.com";
+const MAX_LOGIN_ATTEMPTS = 3;
+function calculateTotalPrice(items) { }
+class UserService { }
+```
+
+❌ **BAD**:
+```javascript
+const e = "user@example.com";  // Too short
+const max_login_attempts = 3;  // Wrong case
+function calc(i) { }           // Unclear
+class userservice { }          // Wrong case
+```
+
+### Code Organization
+
+**File Structure**:
+```
+src/
+├── components/          # UI components
+├── services/           # Business logic
+├── utils/              # Utility functions
+├── types/              # Type definitions
+├── config/             # Configuration
+└── tests/              # Test files
+```
+
+**One Responsibility Per File**:
+- Each file should have a single, clear purpose
+- Keep files under 300 lines (guideline, not hard rule)
+- Split large files into smaller modules
+
+### Comments and Documentation
+
+**When to Comment**:
+- ✅ Complex algorithms requiring explanation
+- ✅ Business rules or domain logic
+- ✅ Workarounds for known issues
+- ✅ Public API documentation
+
+**When NOT to Comment**:
+- ❌ Obvious code (let code speak for itself)
+- ❌ Commented-out code (delete it, Git remembers)
+- ❌ TODO comments (create tasks in WBS instead)
+
+**Examples**:
+
+✅ **GOOD**:
+```javascript
+/**
+ * Calculates user credit score based on payment history
+ * Uses proprietary algorithm version 2.1
+ *
+ * @param {Object} user - User object with payment history
+ * @returns {number} Credit score from 300-850
+ */
+function calculateCreditScore(user) {
+  // Apply 20% penalty for late payments (business rule BR-015)
+  const latePaymentPenalty = user.latePayments * 0.2;
+
+  return Math.max(300, Math.min(850, baseScore - latePaymentPenalty));
+}
+```
+
+❌ **BAD**:
+```javascript
+// Calculate score
+function calc(u) {
+  // Loop through payments
+  // let total = 0;  // TODO: fix this later
+  const p = u.lp * 0.2; // Penalty
+  return Math.max(300, Math.min(850, bs - p));
+}
+```
+
+---
+
+## Testing Standards
+
+### Testing Pyramid
+
+```
+       /\
+      /E2E\      <- Few, slow, expensive
+     /------\
+    /  INTG  \   <- Some, moderate speed
+   /----------\
+  / UNIT TESTS \  <- Many, fast, cheap
+ /--------------\
+```
+
+**Distribution**:
+- Unit Tests: 70% of tests
+- Integration Tests: 20% of tests
+- E2E Tests: 10% of tests
+
+### Unit Testing
+
+**Requirements**:
+- Test individual functions/methods in isolation
+- Mock external dependencies
+- Fast execution (<1 second per test)
+- Minimum 80% code coverage (backend), 70% (frontend)
+
+**Good Unit Test Characteristics**:
+- **F**ast
+- **I**ndependent
+- **R**epeatable
+- **S**elf-validating
+- **T**imely
+
+**Example**:
+
+```javascript
+describe('UserService.createUser', () => {
+  it('should create user with valid data', async () => {
+    const mockDb = { save: jest.fn().mockResolvedValue({ id: 1 }) };
+    const userService = new UserService(mockDb);
+
+    const user = await userService.createUser({
+      email: 'test@example.com',
+      password: 'Test123!'
+    });
+
+    expect(user).toHaveProperty('id');
+    expect(mockDb.save).toHaveBeenCalledTimes(1);
+  });
+
+  it('should throw error for invalid email', async () => {
+    const userService = new UserService(mockDb);
+
+    await expect(
+      userService.createUser({ email: 'invalid', password: 'Test123!' })
+    ).rejects.toThrow('Invalid email');
+  });
+});
+```
+
+### Integration Testing
+
+**Requirements**:
+- Test component interactions
+- Use test database (not production!)
+- Clean state before/after each test
+- Test realistic scenarios
+
+**Example**:
+
+```javascript
+describe('POST /api/users', () => {
+  beforeEach(async () => {
+    await cleanDatabase();
+  });
+
+  it('should create user and return 201', async () => {
+    const response = await request(app)
+      .post('/api/users')
+      .send({ email: 'test@example.com', password: 'Test123!' });
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty('id');
+
+    // Verify in database
+    const user = await db.users.findByEmail('test@example.com');
+    expect(user).toBeDefined();
+  });
+});
+```
+
+### End-to-End Testing
+
+**Requirements**:
+- Test complete user journeys
+- Test in environment similar to production
+- Focus on critical paths
+- Use data-testid attributes for selectors
+
+**Example**:
+
+```javascript
+test('user can register and login', async ({ page }) => {
+  // Register
+  await page.goto('/register');
+  await page.fill('[data-testid="email-input"]', 'test@example.com');
+  await page.fill('[data-testid="password-input"]', 'Test123!');
+  await page.click('[data-testid="register-button"]');
+
+  // Verify redirected to dashboard
+  await expect(page).toHaveURL('/dashboard');
+  await expect(page.locator('[data-testid="welcome-message"]'))
+    .toContainText('Welcome, test@example.com');
+});
+```
+
+---
+
+## Documentation Standards
+
+### Code Documentation
+
+**Every Module Should Have**:
+- Purpose and responsibility
+- Public API documentation
+- Usage examples
+- Dependencies
+
+**Every Public Function Should Have**:
+- Description
+- Parameters with types
+- Return value with type
+- Exceptions thrown (if any)
+
+### README.md Requirements
+
+Every project/service must have a README with:
+- [ ] Project description
+- [ ] Prerequisites
+- [ ] Installation instructions
+- [ ] Configuration
+- [ ] Usage examples
+- [ ] Testing instructions
+- [ ] Deployment guide
+- [ ] Contributing guide
+- [ ] License
+
+### API Documentation
+
+**Every API Endpoint Must Document**:
+- Endpoint URL and HTTP method
+- Request parameters (path, query, headers)
+- Request body schema
+- Response schema (success and error)
+- Status codes
+- Example request/response
+- Authentication requirements
+
+**Example**:
+
+```markdown
+## POST /api/users
+
+Create a new user account.
+
+**Authentication**: None required
+
+**Request Body**:
+```json
+{
+  "email": "user@example.com",
+  "password": "SecurePassword123!",
+  "name": "John Doe"
+}
+```
+
+**Response (201 Created)**:
+```json
+{
+  "id": "uuid-here",
+  "email": "user@example.com",
+  "name": "John Doe",
+  "createdAt": "2025-10-16T10:00:00Z"
+}
+```
+
+**Error Responses**:
+- `400 Bad Request`: Invalid input (validation failed)
+- `409 Conflict`: Email already exists
+- `500 Internal Server Error`: Server error
+
+**Example Request**:
+```bash
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"Test123!","name":"Test User"}'
+```
+```
+
+---
+
+## Git Workflow
+
+### Branch Naming Convention
+
+```
+<type>/<ticket-id>-<short-description>
+
+Examples:
+feature/BACK-001-user-authentication
+bugfix/BUG-FRONT-003-login-button
+hotfix/critical-security-patch
+```
+
+### Commit Message Format
+
+```
+<type>(<scope>): <short summary>
+
+<optional detailed description>
+
+<optional footer>
+```
+
+**Types**:
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation only
+- `style`: Code style changes (formatting, no logic change)
+- `refactor`: Code refactoring
+- `test`: Adding or updating tests
+- `chore`: Build process, dependencies, etc.
+
+**Examples**:
+
+✅ **GOOD**:
+```
+feat(auth): add JWT token authentication
+
+Implemented JWT-based authentication for user login.
+- Added token generation on login
+- Added token validation middleware
+- Added token refresh endpoint
+
+Closes BACK-001
+```
+
+❌ **BAD**:
+```
+updated stuff
+```
+
+### Pull Request Process
+
+1. **Create PR**:
+   - Clear title following commit message format
+   - Detailed description
+   - Link to task in WBS
+   - Screenshots for UI changes
+
+2. **Review**:
+   - Request review from @arch or team member
+   - Address all comments
+   - Re-request review after changes
+
+3. **Merge**:
+   - Squash commits (for feature branches)
+   - Delete branch after merge
+   - Update WBS task status
+
+---
+
+## Code Review Process
+
+### Reviewer Responsibilities
+
+**Check For**:
+- [ ] Code follows development standards
+- [ ] Tests are included and comprehensive
+- [ ] Documentation is updated
+- [ ] No security vulnerabilities
+- [ ] No performance issues
+- [ ] Follows architecture design
+- [ ] Readable and maintainable
+
+**Response Time**: Within 24 hours
+
+### Author Responsibilities
+
+**When Submitting PR**:
+- Self-review code before submitting
+- Ensure all tests pass
+- Provide context in PR description
+- Highlight areas needing extra attention
+
+**When Receiving Feedback**:
+- Respond to all comments (even if just "fixed" or "done")
+- Ask questions if feedback is unclear
+- Thank reviewers for their time
+
+---
+
+## Security Standards
+
+### Authentication and Authorization
+
+- Use bcrypt or argon2 for password hashing (minimum 10 rounds)
+- Implement JWT tokens with reasonable expiration (15-30 minutes)
+- Use refresh tokens for long-lived sessions
+- Implement role-based access control (RBAC)
+
+### Data Protection
+
+- Encrypt sensitive data at rest
+- Use HTTPS for all communication
+- Sanitize all user input
+- Use parameterized queries (prevent SQL injection)
+- Implement rate limiting for APIs
+- Log security events (login failures, access denials)
+
+### Secret Management
+
+- Use environment variables for secrets
+- Use secret management tools (Vault, AWS Secrets Manager)
+- Rotate secrets regularly
+- Never log secrets
+
+---
+
+## Performance Standards
+
+### Backend Performance
+
+- API response time: <200ms for 95th percentile
+- Database queries: <50ms average
+- Implement caching where appropriate
+- Use database indexes on frequently queried columns
+- Implement pagination for large data sets
+
+### Frontend Performance
+
+- First Contentful Paint (FCP): <1.8s
+- Time to Interactive (TTI): <3.8s
+- Largest Contentful Paint (LCP): <2.5s
+- Bundle size: <500KB (initial load)
+- Implement code splitting
+- Optimize images (WebP, lazy loading)
+- Minimize render blocking resources
+
+---
+
+## Technology-Specific Standards
+
+### [Add your tech stack specific standards here]
+
+**Example for React**:
+- Use functional components with hooks
+- Use TypeScript for type safety
+- Implement error boundaries
+- Use React.memo for expensive components
+- Avoid prop drilling (use Context or state management)
+
+**Example for Spring Boot**:
+- Use constructor injection (not field injection)
+- Implement proper exception handling
+- Use DTOs for API request/response
+- Implement audit logging
+- Use Lombok to reduce boilerplate
+
+---
+
+## Enforcement
+
+**Code Review**: All rules are checked during code review.
+
+**CI/CD Pipeline**: Automated checks for:
+- Test coverage thresholds
+- Linting and code style
+- Security vulnerabilities (dependency scanning)
+- Build success
+
+**Consequences of Rule Violations**:
+1. First violation: Warning and guidance
+2. Repeated violations: PR rejection
+3. Critical violations (security): Immediate escalation to @arch and @pm
+
+---
+
+**Document Owner**: @arch
+**Last Updated**: {Date}
+**Next Review**: [Date - quarterly]
+

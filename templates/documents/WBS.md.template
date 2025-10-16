@@ -1,0 +1,470 @@
+# Work Breakdown Structure (WBS)
+
+**Project**: {Project Name}
+**Tech Stack**: {Tech Stack}
+**Created**: {Date}
+**Last Updated**: {Date}
+
+---
+
+## Project Overview
+
+**Description**: [Brief project description]
+
+**Goals**:
+- Goal 1
+- Goal 2
+- Goal 3
+
+**Timeline**: [Start Date] - [Target End Date]
+
+**Team**:
+- @arch: [Name or TBD]
+- @pm: [Name or TBD]
+- @back: [Name or TBD]
+- @front: [Name or TBD]
+- @test: [Name or TBD]
+- @devops: [Name or TBD]
+
+---
+
+## Task Status Legend
+
+📋 **TODO**: Not started
+🔄 **IN_PROGRESS**: Currently being worked on
+✅ **COMPLETED**: Finished and verified
+🔴 **BLOCKED**: Cannot proceed due to dependency or issue
+⏸️  **ON_HOLD**: Paused, waiting for decision
+
+## Priority Legend
+
+🔴 **CRITICAL**: Must be done immediately, blocks other work
+🟡 **HIGH**: Important, should be done soon
+🟢 **MEDIUM**: Normal priority
+⚪ **LOW**: Nice to have, can be deferred
+
+---
+
+## Phase 1: Project Setup and Planning
+
+### ARCH-001: Define System Architecture
+**Priority**: 🔴 CRITICAL
+**Status**: 📋 TODO
+**Assignee**: @arch
+**Estimated Time**: 8 hours
+**Dependencies**: None
+
+**Description**:
+Design overall system architecture including component diagram, technology stack selection, and data flow.
+
+**Acceptance Criteria**:
+- [ ] System architecture diagram created
+- [ ] Technology stack selected and documented
+- [ ] Data flow documented
+- [ ] Architecture document (arch.md) created
+- [ ] Reviewed and approved by @pm and @user
+
+**Deliverables**:
+- docs/codecrew/arch.md
+- Architecture diagrams
+
+**Notes**:
+[Add notes during development]
+
+---
+
+### ARCH-002: Define Development Standards
+**Priority**: 🔴 CRITICAL
+**Status**: 📋 TODO
+**Assignee**: @arch
+**Estimated Time**: 4 hours
+**Dependencies**: ARCH-001
+
+**Description**:
+Create comprehensive development standards including coding conventions, testing requirements, documentation standards, and code review process.
+
+**Acceptance Criteria**:
+- [ ] Coding standards documented
+- [ ] Testing requirements defined
+- [ ] Code review process established
+- [ ] Development rules document created
+- [ ] Team reviewed and approved
+
+**Deliverables**:
+- docs/codecrew/develop_rules.md
+
+**Notes**:
+[Add notes during development]
+
+---
+
+### INFRA-001: Set Up Development Environment
+**Priority**: 🔴 CRITICAL
+**Status**: 📋 TODO
+**Assignee**: @devops
+**Estimated Time**: 6 hours
+**Dependencies**: ARCH-001
+
+**Description**:
+Set up local development environment, version control, and basic project structure.
+
+**Acceptance Criteria**:
+- [ ] Git repository initialized
+- [ ] Project structure created
+- [ ] Development environment documented
+- [ ] All team members can run project locally
+
+**Deliverables**:
+- Git repository
+- README with setup instructions
+- .gitignore configured
+
+**Notes**:
+[Add notes during development]
+
+---
+
+### INFRA-002: Set Up CI/CD Pipeline
+**Priority**: 🟡 HIGH
+**Status**: 📋 TODO
+**Assignee**: @devops
+**Estimated Time**: 8 hours
+**Dependencies**: INFRA-001
+
+**Description**:
+Implement automated build, test, and deployment pipeline.
+
+**Acceptance Criteria**:
+- [ ] CI pipeline configured (build, test, lint)
+- [ ] Automated tests run on every commit
+- [ ] Deployment to staging automated
+- [ ] Pipeline documentation created
+
+**Deliverables**:
+- CI/CD configuration files (.github/workflows, .gitlab-ci.yml, etc.)
+- Pipeline documentation
+
+**Notes**:
+[Add notes during development]
+
+---
+
+## Phase 2: Core Backend Development
+
+### DB-001: Design Database Schema
+**Priority**: 🔴 CRITICAL
+**Status**: 📋 TODO
+**Assignee**: @back
+**Estimated Time**: 6 hours
+**Dependencies**: ARCH-001
+
+**Description**:
+Design database schema for all entities including tables, relationships, and indexes.
+
+**Acceptance Criteria**:
+- [ ] ER diagram created
+- [ ] Database schema designed
+- [ ] Migration scripts created
+- [ ] Schema reviewed by @arch
+
+**Deliverables**:
+- ER diagram
+- Migration scripts
+- Schema documentation
+
+**Notes**:
+[Add notes during development]
+
+---
+
+### BACK-001: Implement User Authentication
+**Priority**: 🔴 CRITICAL
+**Status**: 📋 TODO
+**Assignee**: @back
+**Estimated Time**: 12 hours
+**Dependencies**: DB-001
+
+**Description**:
+Implement user authentication including registration, login, logout, and token management.
+
+**Acceptance Criteria**:
+- [ ] User registration endpoint implemented
+- [ ] Login endpoint with JWT token generation
+- [ ] Logout endpoint
+- [ ] Token refresh endpoint
+- [ ] Password hashing implemented
+- [ ] Unit tests with >80% coverage
+- [ ] API documentation updated
+
+**Deliverables**:
+- Authentication API endpoints
+- Unit tests
+- API documentation
+
+**Notes**:
+[Add notes during development]
+
+---
+
+## Phase 3: Frontend Development
+
+### FRONT-001: Set Up Frontend Project
+**Priority**: 🔴 CRITICAL
+**Status**: 📋 TODO
+**Assignee**: @front
+**Estimated Time**: 4 hours
+**Dependencies**: ARCH-001
+
+**Description**:
+Initialize frontend project with chosen framework, set up routing, state management, and folder structure.
+
+**Acceptance Criteria**:
+- [ ] Frontend project initialized
+- [ ] Routing configured
+- [ ] State management set up
+- [ ] Folder structure organized
+- [ ] Development server running
+
+**Deliverables**:
+- Frontend project structure
+- Configuration files
+- README with setup instructions
+
+**Notes**:
+[Add notes during development]
+
+---
+
+### FRONT-002: Implement Login UI
+**Priority**: 🟡 HIGH
+**Status**: 📋 TODO
+**Assignee**: @front
+**Estimated Time**: 8 hours
+**Dependencies**: FRONT-001, BACK-001
+
+**Description**:
+Create login page UI with form validation and API integration.
+
+**Acceptance Criteria**:
+- [ ] Login page UI implemented
+- [ ] Form validation working
+- [ ] Integrated with backend auth API
+- [ ] Error handling implemented
+- [ ] Loading states handled
+- [ ] Responsive design (mobile, tablet, desktop)
+- [ ] Component tests written
+
+**Deliverables**:
+- Login page component
+- Form validation
+- API integration
+- Component tests
+
+**Notes**:
+[Add notes during development]
+
+---
+
+## Phase 4: Testing and Quality Assurance
+
+### TEST-001: Create Test Plan
+**Priority**: 🟡 HIGH
+**Status**: 📋 TODO
+**Assignee**: @test
+**Estimated Time**: 4 hours
+**Dependencies**: ARCH-001
+
+**Description**:
+Create comprehensive test plan covering functional, integration, performance, and security testing.
+
+**Acceptance Criteria**:
+- [ ] Test strategy defined
+- [ ] Test scope documented
+- [ ] Test cases outlined
+- [ ] Success criteria defined
+- [ ] Approved by @pm
+
+**Deliverables**:
+- Test plan document
+
+**Notes**:
+[Add notes during development]
+
+---
+
+### TEST-INT-001: Integration Testing
+**Priority**: 🟡 HIGH
+**Status**: 📋 TODO
+**Assignee**: @test
+**Estimated Time**: 16 hours
+**Dependencies**: BACK-001, FRONT-002
+
+**Description**:
+Perform integration testing for user authentication flow (frontend → backend → database).
+
+**Acceptance Criteria**:
+- [ ] Test cases written
+- [ ] All test cases executed
+- [ ] Test report created
+- [ ] All critical bugs fixed
+- [ ] Regression testing completed
+
+**Deliverables**:
+- Integration test cases
+- Test execution report
+- Bug reports (if any)
+
+**Notes**:
+[Add notes during development]
+
+---
+
+## Phase 5: Deployment and Go-Live
+
+### INFRA-003: Set Up Production Environment
+**Priority**: 🔴 CRITICAL
+**Status**: 📋 TODO
+**Assignee**: @devops
+**Estimated Time**: 12 hours
+**Dependencies**: ARCH-001
+
+**Description**:
+Provision and configure production infrastructure including servers, databases, load balancers, and monitoring.
+
+**Acceptance Criteria**:
+- [ ] Production servers provisioned
+- [ ] Database configured with backups
+- [ ] SSL certificates installed
+- [ ] Monitoring and alerting configured
+- [ ] Firewall and security configured
+- [ ] Infrastructure documented
+
+**Deliverables**:
+- Production infrastructure
+- Infrastructure as Code
+- Documentation
+
+**Notes**:
+[Add notes during development]
+
+---
+
+### INFRA-004: Production Deployment
+**Priority**: 🔴 CRITICAL
+**Status**: 📋 TODO
+**Assignee**: @devops
+**Estimated Time**: 4 hours
+**Dependencies**: INFRA-003, TEST-INT-001
+
+**Description**:
+Deploy application to production environment and perform smoke testing.
+
+**Acceptance Criteria**:
+- [ ] Application deployed to production
+- [ ] Smoke tests passed
+- [ ] Monitoring confirms system health
+- [ ] Rollback plan tested
+- [ ] Deployment documented
+
+**Deliverables**:
+- Deployed application
+- Deployment report
+- Rollback procedure
+
+**Notes**:
+[Add notes during development]
+
+---
+
+## Backlog (Future Phases)
+
+Tasks that are planned but not yet scheduled:
+
+### BACK-002: Implement User Profile Management
+**Priority**: 🟢 MEDIUM
+**Estimated Time**: 8 hours
+**Description**: CRUD operations for user profiles
+
+### FRONT-003: Implement Dashboard
+**Priority**: 🟢 MEDIUM
+**Estimated Time**: 16 hours
+**Description**: Main dashboard with user statistics and activity
+
+### TEST-E2E-001: End-to-End Testing
+**Priority**: 🟢 MEDIUM
+**Estimated Time**: 12 hours
+**Description**: Automated E2E tests for critical user journeys
+
+---
+
+## Completed Tasks
+
+Completed tasks are moved to `WBS-Completed.md` to keep this document focused on active work.
+
+See: [WBS-Completed.md](./WBS-Completed.md)
+
+---
+
+## Project Metrics
+
+**Total Tasks**: [Count]
+**Completed**: [Count] ([Percentage]%)
+**In Progress**: [Count]
+**Blocked**: [Count]
+**TODO**: [Count]
+
+**Progress by Phase**:
+- Phase 1 (Setup): [X/Y tasks completed]
+- Phase 2 (Backend): [X/Y tasks completed]
+- Phase 3 (Frontend): [X/Y tasks completed]
+- Phase 4 (Testing): [X/Y tasks completed]
+- Phase 5 (Deployment): [X/Y tasks completed]
+
+**Estimated Completion Date**: [Date based on velocity]
+
+---
+
+## Task Numbering Convention
+
+| Prefix | Meaning | Assignee |
+|--------|---------|----------|
+| ARCH | Architecture task | @arch |
+| INFRA | Infrastructure task | @arch/@devops |
+| DB | Database task | @back |
+| BIZ | Business logic task | @back |
+| BACK | Backend task | @back |
+| FRONT | Frontend task | @front |
+| TEST | Testing task | @test |
+| TEST-INT | Integration testing | @test |
+| TEST-E2E | End-to-end testing | @test |
+| BUG | Bug fix | Respective role |
+| DOC | Documentation | Any role |
+
+---
+
+## How to Use This Document
+
+### For Project Manager (@pm):
+1. Update task statuses daily
+2. Move completed tasks to WBS-Completed.md weekly
+3. Add new tasks as they are identified
+4. Review and prioritize backlog regularly
+5. Track metrics and report to stakeholders
+
+### For Team Members:
+1. Check your assigned tasks
+2. Update task status when you start/complete work
+3. Add notes about blockers or challenges
+4. Create completion reports when finishing tasks
+5. Notify @pm of any timeline changes
+
+### For Stakeholders:
+1. Review project metrics for overall progress
+2. Check phase completion for milestone tracking
+3. Review blocked tasks for issues requiring attention
+
+---
+
+**Document Owner**: @pm
+**Last Updated**: {Date}
+**Next Review**: [Date - typically weekly]

@@ -1,0 +1,548 @@
+# System Architecture Documentation
+
+**Project**: {Project Name}
+**Tech Stack**: {Tech Stack}
+**Created**: {Date}
+**Last Updated**: {Date}
+
+---
+
+## Table of Contents
+
+1. [System Overview](#system-overview)
+2. [Architecture Diagram](#architecture-diagram)
+3. [Technology Stack](#technology-stack)
+4. [Component Description](#component-description)
+5. [Data Flow](#data-flow)
+6. [Security Architecture](#security-architecture)
+7. [Scalability and Performance](#scalability-and-performance)
+8. [Deployment Architecture](#deployment-architecture)
+9. [Architecture Decisions](#architecture-decisions)
+
+---
+
+## System Overview
+
+### Purpose
+
+[Brief description of what the system does and why it exists]
+
+### Key Features
+
+1. **Feature 1**: [Description]
+2. **Feature 2**: [Description]
+3. **Feature 3**: [Description]
+
+### Architecture Style
+
+**Selected**: [Microservices / Monolithic / Serverless / etc.]
+
+**Rationale**: [Why this architecture style was chosen]
+
+---
+
+## Architecture Diagram
+
+### High-Level Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                     Client Layer                        │
+│  (Web Browser, Mobile App, Desktop App)                 │
+└──────────────────────┬──────────────────────────────────┘
+                       │ HTTPS
+                       ▼
+┌─────────────────────────────────────────────────────────┐
+│                   API Gateway                           │
+│         (Nginx / Kong / AWS API Gateway)                │
+└──────────────────────┬──────────────────────────────────┘
+                       │
+       ┌───────────────┼───────────────┬─────────────┐
+       │               │               │             │
+       ▼               ▼               ▼             ▼
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│  Service 1  │ │  Service 2  │ │  Service 3  │ │  Service N  │
+│  (Backend)  │ │  (Backend)  │ │  (Backend)  │ │  (Backend)  │
+└──────┬──────┘ └──────┬──────┘ └──────┬──────┘ └──────┬──────┘
+       │               │               │             │
+       └───────────────┴───────────────┴─────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────────┐
+│                   Data Layer                            │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │  Database    │  │    Cache     │  │   Storage    │  │
+│  │ (PostgreSQL) │  │   (Redis)    │  │     (S3)     │  │
+│  └──────────────┘  └──────────────┘  └──────────────┘  │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Component Interaction Diagram
+
+```
+[Detailed diagram showing how components interact]
+```
+
+---
+
+## Technology Stack
+
+### Frontend
+- **Framework**: [React / Vue / Angular / etc.]
+- **Language**: [TypeScript / JavaScript]
+- **State Management**: [Redux / Zustand / Context API]
+- **UI Library**: [Material-UI / Ant Design / Tailwind CSS]
+- **Build Tool**: [Vite / Webpack / Create React App]
+
+### Backend
+- **Framework**: [Spring Boot / Django / Express / etc.]
+- **Language**: [Java / Python / Node.js / Go]
+- **API Style**: RESTful / GraphQL / gRPC
+- **Authentication**: JWT / OAuth2 / Session-based
+
+### Database
+- **Primary Database**: [PostgreSQL / MySQL / MongoDB]
+- **Cache**: [Redis / Memcached]
+- **Search**: [Elasticsearch] (if applicable)
+
+### Infrastructure
+- **Cloud Provider**: [AWS / Azure / GCP / On-premise]
+- **Container**: [Docker / Podman]
+- **Orchestration**: [Kubernetes / Docker Swarm] (if applicable)
+- **CI/CD**: [GitHub Actions / GitLab CI / Jenkins]
+- **Monitoring**: [Prometheus / Datadog / New Relic]
+
+### Third-Party Services
+- **Email**: [SendGrid / AWS SES]
+- **SMS**: [Twilio / AWS SNS]
+- **Payment**: [Stripe / PayPal] (if applicable)
+- **Analytics**: [Google Analytics / Mixpanel]
+
+---
+
+## Component Description
+
+### Frontend Application
+
+**Purpose**: User interface and client-side logic
+
+**Responsibilities**:
+- Render UI components
+- Handle user interactions
+- Communicate with backend APIs
+- Manage client-side state
+- Implement routing
+
+**Technology**: [React / Vue / Angular]
+
+**Location**: `/frontend` or separate repository
+
+---
+
+### API Gateway
+
+**Purpose**: Single entry point for all client requests
+
+**Responsibilities**:
+- Route requests to appropriate backend services
+- Authentication and authorization
+- Rate limiting
+- Request/response transformation
+- API versioning
+
+**Technology**: [Nginx / Kong / AWS API Gateway]
+
+**Endpoints**: `https://api.example.com/v1/*`
+
+---
+
+### Backend Services
+
+#### Service 1: [User Service]
+
+**Purpose**: [Manage user accounts and authentication]
+
+**Responsibilities**:
+- User registration and login
+- User profile management
+- Password reset
+- JWT token generation
+
+**API Endpoints**:
+- `POST /api/v1/users` - Create user
+- `POST /api/v1/auth/login` - User login
+- `GET /api/v1/users/{id}` - Get user profile
+- `PUT /api/v1/users/{id}` - Update user profile
+
+**Database**: `users` table in PostgreSQL
+
+**Dependencies**: Email service (for verification)
+
+---
+
+#### Service 2: [Product Service]
+
+**Purpose**: [Manage product catalog]
+
+**Responsibilities**:
+- Product CRUD operations
+- Product search
+- Category management
+- Inventory tracking
+
+**API Endpoints**:
+- `GET /api/v1/products` - List products
+- `POST /api/v1/products` - Create product
+- `GET /api/v1/products/{id}` - Get product details
+- `PUT /api/v1/products/{id}` - Update product
+
+**Database**: `products`, `categories` tables in PostgreSQL
+
+**Cache**: Product details cached in Redis (TTL: 1 hour)
+
+---
+
+### Database
+
+**Type**: Relational (PostgreSQL 13)
+
+**Schema**:
+
+```sql
+-- Users table
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  name VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Add more table schemas...
+```
+
+**Indexes**:
+- `users(email)` - For login lookups
+- `products(category_id)` - For category filtering
+
+**Backup Strategy**:
+- Automated daily backups
+- Point-in-time recovery enabled
+- 30-day retention
+
+---
+
+### Cache (Redis)
+
+**Purpose**: Improve performance by caching frequently accessed data
+
+**Cached Data**:
+- User sessions (TTL: 24 hours)
+- Product details (TTL: 1 hour)
+- API responses (TTL: 5 minutes)
+
+**Configuration**:
+- Max memory: 2GB
+- Eviction policy: LRU (Least Recently Used)
+
+---
+
+## Data Flow
+
+### User Registration Flow
+
+```
+1. User fills registration form
+   ↓
+2. Frontend validates input
+   ↓
+3. POST /api/v1/users
+   ↓
+4. API Gateway routes to User Service
+   ↓
+5. User Service validates data
+   ↓
+6. Hash password with bcrypt
+   ↓
+7. Save user to database
+   ↓
+8. Send verification email
+   ↓
+9. Return success response
+   ↓
+10. Frontend redirects to email verification page
+```
+
+### User Login Flow
+
+```
+1. User enters email and password
+   ↓
+2. POST /api/v1/auth/login
+   ↓
+3. User Service validates credentials
+   ↓
+4. Generate JWT access token (15 min expiry)
+   ↓
+5. Generate refresh token (7 day expiry)
+   ↓
+6. Store refresh token in database
+   ↓
+7. Return tokens to client
+   ↓
+8. Frontend stores tokens (access in memory, refresh in httpOnly cookie)
+   ↓
+9. Include access token in subsequent requests
+```
+
+---
+
+## Security Architecture
+
+### Authentication
+
+**Method**: JWT (JSON Web Token)
+
+**Token Structure**:
+- **Access Token**: Short-lived (15 minutes), contains user ID and roles
+- **Refresh Token**: Long-lived (7 days), stored in database for revocation
+
+**Token Storage**:
+- Access token: Frontend memory (not localStorage for security)
+- Refresh token: httpOnly cookie (prevents XSS attacks)
+
+### Authorization
+
+**Method**: Role-Based Access Control (RBAC)
+
+**Roles**:
+- `admin`: Full system access
+- `user`: Standard user access
+- `guest`: Limited read-only access
+
+**Endpoint Protection**:
+```
+GET /api/v1/users/{id}     - Requires: user role, own profile or admin
+POST /api/v1/products      - Requires: admin role
+GET /api/v1/products       - Requires: authenticated user
+```
+
+### Data Protection
+
+**In Transit**:
+- HTTPS/TLS 1.3 for all communication
+- Certificate from Let's Encrypt
+
+**At Rest**:
+- Database encryption enabled
+- Sensitive fields (e.g., SSN) encrypted at application level using AES-256
+
+**Input Validation**:
+- All user input validated and sanitized
+- SQL injection prevention via parameterized queries
+- XSS prevention via output encoding
+
+### API Security
+
+**Rate Limiting**:
+- 100 requests per minute per IP
+- 1000 requests per hour per user
+
+**CORS Policy**:
+- Allowed origins: `https://example.com`, `https://app.example.com`
+- Credentials allowed: Yes
+
+---
+
+## Scalability and Performance
+
+### Horizontal Scaling
+
+**Services**: Stateless, can scale horizontally
+- Deploy multiple instances behind load balancer
+- Auto-scaling based on CPU/memory usage
+
+**Database**:
+- Read replicas for read-heavy workloads
+- Master-replica setup with automatic failover
+
+**Cache**:
+- Redis Cluster for high availability
+- Distributed caching
+
+### Performance Targets
+
+**API Response Time**:
+- 95th percentile: <200ms
+- 99th percentile: <500ms
+
+**Page Load Time**:
+- First Contentful Paint: <1.8s
+- Time to Interactive: <3.8s
+
+**Throughput**:
+- Support 1000 concurrent users
+- Handle 10,000 requests per minute
+
+### Caching Strategy
+
+**Levels**:
+1. **Browser Cache**: Static assets (1 year)
+2. **CDN Cache**: Images, CSS, JS (1 day)
+3. **Application Cache**: API responses (5 minutes)
+4. **Database Cache**: Query results (1 hour)
+
+---
+
+## Deployment Architecture
+
+### Environments
+
+#### Development
+- Local development on developer machines
+- Shared dev database for integration testing
+
+#### Staging
+- Mirrors production environment
+- Used for final testing before production release
+- Automatic deployment from `develop` branch
+
+#### Production
+- High availability setup
+- Multi-AZ deployment (if cloud)
+- Blue-green deployment for zero-downtime releases
+
+### Infrastructure
+
+**Cloud Provider**: [AWS / Azure / GCP]
+
+**Resources**:
+- **Compute**: [EC2 instances / App Service / Compute Engine]
+- **Database**: [RDS / Azure Database / Cloud SQL]
+- **Storage**: [S3 / Blob Storage / Cloud Storage]
+- **CDN**: [CloudFront / Azure CDN / Cloud CDN]
+
+**Infrastructure as Code**: Terraform / CloudFormation
+
+---
+
+## Architecture Decisions
+
+### ADR Index
+
+Link to all Architecture Decision Records:
+
+- [ADR-001: Database Selection](./ADR-001-Database-Selection.md)
+- [ADR-002: Authentication Strategy](./ADR-002-Authentication-Strategy.md)
+- [ADR-003: Caching Strategy](./ADR-003-Caching-Strategy.md)
+- [ADR-004: API Gateway Selection](./ADR-004-API-Gateway.md)
+
+---
+
+## Diagrams
+
+### Deployment Diagram
+
+[Insert deployment diagram showing servers, load balancers, databases, etc.]
+
+### Network Diagram
+
+[Insert network diagram showing VPCs, subnets, security groups, etc.]
+
+### Database ER Diagram
+
+[Insert Entity-Relationship diagram]
+
+---
+
+## Monitoring and Observability
+
+### Metrics
+
+**System Metrics**:
+- CPU usage, memory usage, disk I/O
+- Network traffic
+
+**Application Metrics**:
+- Request rate, error rate, latency
+- Active users, session duration
+
+**Business Metrics**:
+- User registrations, logins
+- Transactions, revenue
+
+### Logging
+
+**Log Aggregation**: ELK Stack (Elasticsearch, Logstash, Kibana)
+
+**Log Levels**:
+- ERROR: Critical issues requiring immediate attention
+- WARN: Potential issues
+- INFO: Important events
+- DEBUG: Detailed diagnostic information
+
+**Log Retention**: 30 days
+
+### Alerting
+
+**Alert Channels**: Email, Slack, PagerDuty
+
+**Alert Rules**:
+- Error rate >5% for 5 minutes → Page on-call
+- Response time >500ms for 10 minutes → Warning
+- Database CPU >80% for 5 minutes → Warning
+- Service down → Immediate page
+
+---
+
+## Disaster Recovery
+
+### Backup Strategy
+
+**Database**:
+- Automated daily backups
+- Continuous archiving for point-in-time recovery
+- Backups retained for 30 days
+- Cross-region backup replication
+
+**Files/Storage**:
+- Versioning enabled
+- Cross-region replication
+
+### Recovery Procedures
+
+**RTO (Recovery Time Objective)**: 4 hours
+**RPO (Recovery Point Objective)**: 1 hour
+
+**Disaster Recovery Plan**: [Link to detailed DR plan]
+
+---
+
+## Future Considerations
+
+### Planned Improvements
+
+1. **Microservices Migration**: Break monolith into microservices (Q2 2026)
+2. **GraphQL API**: Add GraphQL endpoint alongside REST (Q3 2026)
+3. **Machine Learning**: Product recommendations (Q4 2026)
+4. **Multi-region Deployment**: Deploy to multiple regions for global availability (2027)
+
+### Technical Debt
+
+1. **Legacy Code Refactoring**: User service has technical debt, plan refactoring in Q1 2026
+2. **Database Optimization**: Add missing indexes, estimated 2 weeks effort
+
+---
+
+## References
+
+- [Development Standards](./develop_rules.md)
+- [API Documentation](./api-docs.md)
+- [Deployment Guide](./deployment-guide.md)
+
+---
+
+**Document Owner**: @arch
+**Last Updated**: {Date}
+**Next Review**: [Quarterly]

@@ -60,6 +60,7 @@ Your project now has:
 - **6 Standard Roles**: architect, pm, backend, frontend, test, devops
 - Clear responsibilities and decision authorities
 - Seamless collaboration protocols
+- Comprehensive role templates with workflows and best practices
 
 ### 2. **Document-Driven Development**
 - **7 Document Types**: Architecture, WBS, ADR, Test Reports, Code Reviews, Status Reports, Completion Reports
@@ -147,22 +148,13 @@ templates/
 │   ├── backend.md            # Backend Developer role
 │   ├── frontend.md           # Frontend Developer role
 │   ├── test.md               # Test Engineer role
-│   └── custom-role.md        # Custom role template
+│   └── devops.md             # DevOps Engineer role
 │
-├── documents/                # Document templates
-│   ├── arch.md.template      # Architecture documentation
-│   ├── develop_rules.md.template  # Development standards
-│   ├── WBS.md.template       # Work breakdown structure
-│   ├── ADR-template.md       # Architecture decision record
-│   ├── completion-report.md  # Task completion report
-│   ├── test-report.md        # Test report
-│   └── code-review.md        # Code review report
-│
-└── workflows/                # Workflow templates
-    ├── task-assignment.md    # Task assignment workflow
-    ├── code-review.md        # Code review workflow
-    ├── decision-making.md    # Decision making workflow
-    └── release.md            # Release workflow
+└── documents/                # Document templates
+    ├── arch.md.template      # Architecture documentation
+    ├── develop_rules.md.template  # Development standards
+    ├── WBS.md.template       # Work breakdown structure
+    └── ADR-template.md       # Architecture decision record
 ```
 
 ### Standards
@@ -187,9 +179,10 @@ scripts/
 ### Examples
 ```
 examples/
-├── credit-control-system/    # Full example (Java + React)
-├── simple-todo-app/          # Simple example (Node.js + Vue)
-└── microservices-demo/       # Microservices example (Go)
+└── README.md                 # Examples overview and links
+    ├── Credit Control System # Real-world example (Java + React + Microservices)
+    ├── Simple Todo App       # Planned: Simple example (Node.js + Vue)
+    └── E-commerce Platform   # Planned: Medium example (Python + Django)
 ```
 
 ---
