@@ -53,13 +53,13 @@ Identify your role from your system prompt or slash command:
 ### 3️⃣ Your Role Quick Reference (MUST READ THIRD)
 📄 **File**: `templates/roles/quick-ref/{your-role}-quick.md`
 
-**Available quick refs**:
-- `pm-quick.md` - Project Manager
-- `arch-quick.md` - Architect
-- `backend-quick.md` - Backend Developer
-- `frontend-quick.md` - Frontend Developer
-- `test-quick.md` - Test Engineer
-- `devops-quick.md` - DevOps Engineer
+**Available quick refs** (~200-330 lines each):
+- `templates/roles/quick-ref/pm-quick.md` - Project Manager (210 lines)
+- `templates/roles/quick-ref/arch-quick.md` - Architect (248 lines)
+- `templates/roles/quick-ref/backend-quick.md` - Backend Developer (274 lines)
+- `templates/roles/quick-ref/frontend-quick.md` - Frontend Developer (334 lines)
+- `templates/roles/quick-ref/test-quick.md` - Test Engineer (273 lines)
+- `templates/roles/quick-ref/devops-quick.md` - DevOps Engineer (294 lines)
 
 **What it tells you**:
 - Your core responsibilities
@@ -93,11 +93,19 @@ You've now read the essentials (~1500 tokens, ~90 seconds).
 
 | When You Need... | Read This... | Size |
 |------------------|--------------|------|
-| Code examples for your role | `templates/roles/manuals/{role}-manual.md` | ~500 lines |
-| Detailed coding standards | `docs/codecrew/develop_rules.md` | ~800 lines |
-| Architecture details | `docs/codecrew/arch.md` | ~300 lines |
+| Detailed workflows, examples | `templates/roles/manuals/{role}-manual.md` | 300-650 lines |
+| Complete coding standards | `docs/codecrew/develop_rules.md` | ~800 lines |
+| Full architecture details | `docs/codecrew/arch.md` | ~300 lines |
 | How to write an ADR | `templates/documents/ADR-template.md` | ~450 lines |
 | WBS template structure | `templates/documents/WBS.md.template` | ~450 lines |
+
+**Available detailed manuals**:
+- `templates/roles/manuals/pm-manual.md` - Project Manager workflows
+- `templates/roles/manuals/arch-manual.md` - Architect workflows
+- `templates/roles/manuals/backend-manual.md` - Backend development guide
+- `templates/roles/manuals/frontend-manual.md` - Frontend development guide
+- `templates/roles/manuals/test-manual.md` - Testing guide
+- `templates/roles/manuals/devops-manual.md` - DevOps guide
 
 **Strategy**:
 - ✅ Read quick-refs every session (fast, essential)
