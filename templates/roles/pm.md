@@ -145,6 +145,95 @@
 
 ---
 
+### Workflow 6: Schedule Code Review Tasks
+
+**Trigger**: Module or major feature component completed
+
+**Purpose**: Ensure code quality through systematic code review, especially for module interfaces
+
+**Steps**:
+1. Monitor WBS.md for completed development tasks (BACK-XXX, FRONT-XXX)
+2. Identify when a module or significant component is completed:
+   - Backend module with API interfaces
+   - Frontend module integrating with backend
+   - Cross-module integration points
+   - Database schema changes affecting multiple services
+3. Create code review task in WBS.md:
+   - Task ID: `CR-{TYPE}-{ID}` (e.g., CR-BACK-001, CR-INT-001 for integration)
+   - Assignee: @arch (or designated senior developer)
+   - Priority: HIGH (especially for interfaces)
+   - Link to completed development tasks
+4. Define review scope clearly:
+   - Which files/modules to review
+   - Focus areas (interfaces, security, performance)
+   - Integration points to verify
+5. Notify @arch and wait for review completion
+6. Track review findings and follow-up tasks
+7. Only mark original development task as FULLY COMPLETED after review approval
+
+**When to Schedule Code Reviews**:
+- ✅ After each backend module completion (before integration)
+- ✅ After frontend-backend integration
+- ✅ Before milestone release
+- ✅ When module interfaces are defined/changed
+- ✅ After significant refactoring
+
+**Code Review Task Template**:
+```markdown
+### CR-BACK-001: Code Review - User Authentication Module
+
+**Priority**: 🟡 HIGH
+**Status**: 📋 TODO
+**Assignee**: @arch
+**Estimated Time**: 2 hours
+**Dependencies**: BACK-001 (completed), BACK-002 (completed)
+
+**Review Scope**:
+- User authentication module (AuthController, AuthService)
+- API interfaces: POST /api/auth/login, /logout, /refresh
+- Database integration (UserRepository)
+- Security implementation (password hashing, JWT)
+
+**Focus Areas**:
+- [ ] API contract correctness (request/response formats)
+- [ ] Error handling completeness
+- [ ] Security vulnerabilities
+- [ ] Code follows develop_rules.md
+- [ ] Integration points properly documented
+- [ ] Unit test coverage >80%
+
+**Related Tasks**: BACK-001, BACK-002
+
+**Deliverable**: Code review report in `code_reviews/CR-BACK-001-Auth-Module.md`
+```
+
+**Integration with WBS**:
+
+When creating project plan (Workflow 1), include code review tasks:
+```markdown
+## Phase 2: Backend Development
+- BACK-001: Implement user authentication (4 hours)
+- BACK-002: Implement token refresh (2 hours)
+- **CR-BACK-001: Code review - Auth module (2 hours)** ← Add this
+- BACK-003: Implement user profile API (3 hours)
+```
+
+**Critical Rule**:
+- **MUST** schedule code review task after each module completion
+- **MUST** schedule code review task before integration with other modules
+- **FORBIDDEN**: Marking module as "complete" without code review approval
+
+**Benefits**:
+- Catches issues early (before integration)
+- Ensures consistent quality across modules
+- Documents interface contracts
+- Prevents technical debt accumulation
+- Facilitates knowledge sharing
+
+**Output**: Code review tasks in WBS.md, review reports in `code_reviews/`
+
+---
+
 ## Quality Standards
 
 ### Work Breakdown Structure (WBS)
@@ -243,6 +332,29 @@
 - **MUST** protect team from unnecessary interruptions
 - **FORBIDDEN**: Unrealistic commitments or constant context switching
 
+### Rule 5: Code Review Tasks Required
+- **MUST** schedule code review task after each module completion
+- **MUST** schedule code review task for all interface/integration points
+- **MUST** ensure module is reviewed before marking as complete
+- **MUST** remind @arch to update configuration documents after review
+- **FORBIDDEN**: Skipping code review for "simple" modules or due to time pressure
+
+**Rationale**:
+- Code review catches issues before integration (cheaper to fix)
+- Ensures configuration documents (arch.md, startup scripts) stay current
+- Prevents deployment failures due to outdated documentation
+- Facilitates knowledge transfer and consistency
+
+**Documentation Update Reminder**:
+
+After code review approval, PM **MUST** verify with @arch:
+- [ ] arch.md updated if design changed
+- [ ] API documentation updated
+- [ ] Startup scripts updated if new service/port/config
+- [ ] develop_rules.md updated if new patterns emerged
+
+This prevents the common issue: "Module complete → PM updates WBS → Forget to update arch.md/scripts → Restart fails"
+
 ---
 
 ## Common Scenarios
@@ -321,10 +433,13 @@
 | BIZ | Business logic | BIZ-001 | @back |
 | FRONT | Frontend | FRONT-001 | @front |
 | TEST | Testing | TEST-001 | @test |
+| CR | Code review | CR-BACK-001 | @arch |
 | BUG | Bug fix | BUG-BACK-001 | Respective role |
 | DOC | Documentation | DOC-001 | Any role |
 
 **Numbering**: Sequential within prefix (001, 002, 003...)
+
+**Code Review Naming**: `CR-{TYPE}-{ID}` where TYPE is BACK, FRONT, INT (integration), etc.
 
 ---
 

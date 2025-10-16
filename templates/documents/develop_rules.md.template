@@ -131,13 +131,116 @@ This document defines the development standards, best practices, and critical ru
 
 ---
 
-### Rule 3: Test Before Commit
+### Rule 3: Frontend Test Resource Management
+
+**Purpose**: Prevent system crashes and CPU overload during frontend testing on resource-constrained systems.
+
+**Applies To**: @front (especially on low-memory systems <16GB RAM)
+
+**Requirements**:
+- **MUST** configure test framework with resource limits (thread/worker limits)
+- **MUST** use safe test command (`npm run test:safe`) as default, not unlimited `npm test`
+- **MUST** monitor system memory during testing - stop if >70% used
+- **MUST** run tests incrementally/sequentially if system resources are limited
+- **FORBIDDEN** to run unlimited parallel tests that exhaust system resources
+
+**Rationale**:
+- **Time-Space Tradeoff**: Sacrifice test parallelism to prevent OOM crashes and CPU 100%
+- Test frameworks default to using all CPU cores (6-8 workers), consuming 6-8GB+ memory
+- Low-memory systems (≤8GB) cannot sustain unlimited workers → system freeze/crash
+- Solution: Limit to 2 workers with timeouts → stable execution, slightly slower but reliable
+
+**Required Configuration** (for Vitest/Jest):
+
+```typescript
+// vite.config.ts or jest.config.js
+export default defineConfig({
+  test: {
+    // Resource limits to prevent system crashes
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        maxThreads: 2,        // Limit to 2 workers (not 6-8 default)
+        minThreads: 1,        // Minimum 1 worker
+      }
+    },
+    testTimeout: 30000,       // 30s timeout (prevent hanging tests)
+    hookTimeout: 30000,       // 30s hook timeout
+    teardownTimeout: 10000,   // 10s cleanup timeout
+  }
+})
+```
+
+**Required package.json Scripts**:
+
+```json
+{
+  "scripts": {
+    "test": "vitest",                           // Original (use only on high-memory systems ≥16GB)
+    "test:safe": "vitest --run --reporter=dot", // DEFAULT - safe for all systems
+    "test:safe-verbose": "vitest --run --reporter=basic", // Debugging
+    "test:coverage": "vitest --coverage"
+  }
+}
+```
+
+**Testing Workflow**:
+
+1. **Daily Development**: `npm run test:safe` (minimal output, no crashes)
+2. **Debugging Failures**: `npm run test:safe-verbose` (detailed errors)
+3. **Watch Mode**: Use with caution - monitor memory usage
+4. **CI/CD**: Always use `npm run test:safe` in pipelines
+
+**Performance Impact**:
+- Workers: 6 → 2 (reduced by 66%)
+- Test time: +20-40% slower (but completes vs. timeout/crash)
+- Memory usage: ~6GB → ~600MB (90% reduction)
+
+**Monitoring Commands**:
+
+```bash
+# Check memory before testing
+free -h
+
+# Kill zombie test processes if needed
+pkill -9 -f vitest   # or jest, depending on framework
+
+# Monitor resources during test (in separate terminal)
+watch -n 1 'free -h && ps aux | grep vitest'
+```
+
+**Examples**:
+
+❌ **WRONG** - Causes system crash on low-memory systems:
+```bash
+npm test  # Uses all CPU cores, exhausts memory, CPU 100%, system freeze
+```
+
+✅ **CORRECT** - Safe execution:
+```bash
+npm run test:safe
+```
+
+**High-Memory System Exception** (≥16GB RAM):
+- Systems with ≥16GB RAM may use `npm test` without limits
+- Still recommended to use `test:safe` in CI/CD for consistency
+- Document system specs in arch.md if using unlimited mode
+
+**Consequences of Violation**:
+- System crash or freeze (requires hard reboot)
+- Lost unsaved work
+- CI/CD pipeline timeout
+- Development productivity loss
+
+---
+
+### Rule 4: Test Before Commit
 
 **Purpose**: Ensure code quality and prevent broken builds.
 
 **Requirements**:
 - **MUST** write tests for all new features and bug fixes
-- **MUST** run full test suite before committing
+- **MUST** run full test suite before committing (use `test:safe` for frontend)
 - **MUST** ensure all tests pass before submitting for review
 - **MUST** achieve minimum code coverage targets
 
@@ -192,7 +295,7 @@ git commit -m "feat: add feature (fix tests later)"
 
 ---
 
-### Rule 4: Code Review Required
+### Rule 5: Code Review Required
 
 **Purpose**: Maintain code quality and share knowledge.
 
@@ -244,7 +347,7 @@ git commit -m "feat: add feature (fix tests later)"
 
 ---
 
-### Rule 5: Security First
+### Rule 6: Security First
 
 **Purpose**: Protect user data and prevent security breaches.
 
