@@ -33,7 +33,19 @@ cd CodeCrew
 # Follow the prompts
 ```
 
-### 2. Start Using AI Agents
+### 2. Start Your First AI Session
+
+**Every AI agent should read this first**: 📄 `docs/codecrew/START-HERE.md`
+
+This entry point guides you through:
+- ✅ Reading project context (~30 seconds)
+- ✅ Reading critical rules (~20 seconds)
+- ✅ Reading your role quick reference (~30 seconds)
+- ✅ Finding your active tasks
+
+**Total time**: ~90 seconds | **Total tokens**: ~1500
+
+### 3. Start Using AI Agents
 
 ```bash
 # With Claude Code (recommended)
@@ -44,7 +56,7 @@ cd CodeCrew
 /test create test cases
 ```
 
-### 3. That's It!
+### 4. That's It!
 
 Your project now has:
 - ✅ Complete role definitions (architect, pm, backend, frontend, test)
@@ -87,6 +99,39 @@ Your project now has:
 - **Languages**: Java, Python, Node.js, Go, Ruby, C#, PHP, Rust, and more
 - **AI Tools**: Claude Code, GitHub Copilot, Cursor, Tabnine, or custom agents
 - **Project Types**: Web apps, microservices, mobile apps, AI/ML projects
+
+---
+
+## 🧠 Two-Layer Architecture: AI's "External Brain"
+
+CodeCrew uses a **two-layer documentation architecture** designed to prevent token overload and context exhaustion:
+
+### Layer 1: Quick References (Read Every Session)
+- **START-HERE.md** - Entry point (tells AI what to read and when)
+- **project-context.md** - Current status, recent changes, constraints
+- **RULES-CRITICAL.md** - 6 critical rules (one-page reference)
+- **{role}-quick.md** - Role-specific essentials (100-150 lines each)
+
+**Time**: ~90 seconds | **Tokens**: ~1500 | **Frequency**: Every session
+
+### Layer 2: Detailed Manuals (Read When Needed)
+- **{role}-manual.md** - Comprehensive role workflows (500+ lines)
+- **develop_rules.md** - Complete development standards
+- **arch.md** - Full system architecture
+- **Document templates** - ADR, WBS, reports
+
+**Time**: As needed | **Tokens**: ~5000+ | **Frequency**: Reference only
+
+### Benefits
+✅ **80% token reduction** per session (7500 → 1500 tokens)
+✅ **Faster initialization** (5 minutes → 90 seconds)
+✅ **Progressive information disclosure** (learn as you go)
+✅ **Reduced context exhaustion** (AI stays focused on current work)
+
+**How to use**:
+1. AI reads START-HERE.md first (tells them what to read next)
+2. AI reads Layer 1 docs every session (quick context refresh)
+3. AI reads Layer 2 docs only when they need specific details
 
 ---
 
